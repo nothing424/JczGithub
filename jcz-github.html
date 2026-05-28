@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JCZ GITHUB</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:     #070709;
+  --bg1:    #0e0e12;
+  --bg2:    #13131a;
+  --bg3:    #1a1a24;
+  --border: rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.12);
+  --text:   #e8e8f0;
+  --muted:  #5a5a78;
+  --muted2: #8080a0;
+  --accent: #7c6fff;
+  --accent2:#a78bfa;
+  --blue:   #3b82f6;
+  --green:  #22c55e;
+  --red:    #ef4444;
+  --grad: linear-gradient(135deg, #7c6fff, #a78bfa, #60a5fa);
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:48px 16px 80px;
+}
+
+/* ── AMBIENT GLOW ── */
+body::before{
+  content:'';
+  position:fixed;
+  top:-20%;left:50%;
+  transform:translateX(-50%);
+  width:700px;height:400px;
+  background:radial-gradient(ellipse,rgba(124,111,255,0.12) 0%,transparent 70%);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ── HEADER ── */
+.header{
+  text-align:center;
+  margin-bottom:44px;
+  position:relative;
+  z-index:1;
+  animation:fadeDown .5s ease;
+}
+
+.header-eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:rgba(124,111,255,0.1);
+  border:1px solid rgba(124,111,255,0.25);
+  border-radius:99px;
+  padding:5px 14px;
+  font-size:11px;
+  font-family:'DM Mono',monospace;
+  color:var(--accent2);
+  letter-spacing:2px;
+  margin-bottom:20px;
+}
+.header-eyebrow .dot{
+  width:6px;height:6px;
+  background:var(--green);
+  border-radius:50%;
+  box-shadow:0 0 6px var(--green);
+  animation:pulse 2s infinite;
+}
+
+.header h1{
+  font-family:'Syne',sans-serif;
+  font-weight:800;
+  font-size:clamp(42px,10vw,82px);
+  letter-spacing:-2px;
+  line-height:.95;
+  background:var(--grad);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+.header-sub{
+  font-size:13px;
+  color:var(--muted2);
+  margin-top:12px;
+  letter-spacing:.5px;
+}
+
+/* ── CARD ── */
+.card{
+  width:100%;
+  max-width:660px;
+  background:var(--bg1);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:32px 28px;
+  position:relative;
+  z-index:1;
+  animation:fadeUp .5s .1s both ease;
+  box-shadow:
+    0 0 0 1px rgba(124,111,255,0.04),
+    0 32px 64px rgba(0,0,0,.6),
+    0 2px 4px rgba(0,0,0,.4);
+}
+
+/* top gradient line */
+.card::before{
+  content:'';
+  position:absolute;
+  top:0;left:24px;right:24px;
+  height:1px;
+  background:var(--grad);
+  border-radius:99px;
+  opacity:.5;
+}
+
+/* ── SECTION ── */
+.section{margin-bottom:24px}
+
+.section-label{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:11px;
+  font-family:'DM Mono',monospace;
+  font-weight:500;
+  color:var(--muted2);
+  letter-spacing:2px;
+  text-transform:uppercase;
+  margin-bottom:12px;
+}
+.section-num{
+  background:var(--bg3);
+  border:1px solid var(--border2);
+  border-radius:6px;
+  padding:2px 8px;
+  font-size:10px;
+  color:var(--accent);
+}
+
+/* ── INPUTS ── */
+.field{position:relative}
+
+input[type=text],input[type=password]{
+  width:100%;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  color:var(--text);
+  font-family:'DM Mono',monospace;
+  font-size:14px;
+  padding:14px 44px 14px 16px;
+  outline:none;
+  transition:border-color .2s,box-shadow .2s;
+  caret-color:var(--accent);
+}
+input[type=text]:focus,input[type=password]:focus{
+  border-color:rgba(124,111,255,.5);
+  box-shadow:0 0 0 3px rgba(124,111,255,.08);
+}
+input::placeholder{color:var(--muted)}
+
+.field-icon{
+  position:absolute;
+  right:14px;top:50%;
+  transform:translateY(-50%);
+  cursor:pointer;
+  color:var(--muted);
+  background:none;border:none;
+  font-size:15px;
+  transition:color .2s;
+  padding:4px;
+}
+.field-icon:hover{color:var(--text)}
+
+/* ── MODE TABS ── */
+.mode-tabs{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:4px;
+  margin-bottom:14px;
+}
+
+.mode-tab{
+  background:transparent;
+  border:none;
+  border-radius:9px;
+  color:var(--muted2);
+  font-family:'Inter',sans-serif;
+  font-size:12px;
+  font-weight:500;
+  padding:10px 8px;
+  cursor:pointer;
+  transition:all .2s;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+}
+.mode-tab .tab-icon{font-size:17px}
+.mode-tab:hover{color:var(--text);background:var(--bg3)}
+.mode-tab.active{
+  background:var(--bg3);
+  color:var(--accent2);
+  border:1px solid rgba(124,111,255,.2);
+  box-shadow:0 2px 8px rgba(0,0,0,.3);
+}
+
+/* ── DROP ZONE ── */
+.drop-zone{
+  position:relative;
+  border:1.5px dashed var(--border2);
+  border-radius:14px;
+  padding:32px 20px;
+  text-align:center;
+  cursor:pointer;
+  background:var(--bg2);
+  transition:all .25s;
+}
+.drop-zone:hover,.drop-zone.dragover{
+  border-color:rgba(124,111,255,.5);
+  background:rgba(124,111,255,.04);
+  box-shadow:0 0 20px rgba(124,111,255,.06);
+}
+.drop-zone input[type=file]{
+  position:absolute;inset:0;
+  opacity:0;cursor:pointer;
+  width:100%;height:100%;
+}
+.drop-icon-wrap{
+  width:52px;height:52px;
+  background:var(--bg3);
+  border:1px solid var(--border2);
+  border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;
+  margin:0 auto 12px;
+}
+.drop-main{font-size:14px;color:var(--text);font-weight:500;margin-bottom:4px}
+.drop-main span{color:var(--accent2)}
+.drop-hint{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:1px}
+
+/* ── FILE CHIP ── */
+.file-chip{
+  display:none;
+  align-items:center;
+  gap:10px;
+  background:rgba(34,197,94,.07);
+  border:1px solid rgba(34,197,94,.2);
+  border-radius:10px;
+  padding:10px 14px;
+  margin-top:10px;
+  font-size:12px;
+  font-family:'DM Mono',monospace;
+  color:var(--green);
+}
+.file-chip.show{display:flex}
+.chip-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip-clear{
+  background:none;border:none;
+  color:var(--muted);cursor:pointer;
+  font-size:13px;padding:2px 6px;
+  border-radius:6px;
+  transition:all .2s;
+}
+.chip-clear:hover{background:rgba(239,68,68,.15);color:var(--red)}
+
+/* ── PRIVACY ROW ── */
+.row{
+  display:flex;align-items:center;
+  justify-content:space-between;
+  margin-top:12px;
+}
+.row-label{font-size:12px;color:var(--muted2);display:flex;align-items:center;gap:6px}
+
+.toggle{position:relative;width:44px;height:24px}
+.toggle input{display:none}
+.toggle-track{
+  position:absolute;inset:0;
+  background:var(--bg3);
+  border:1px solid var(--border2);
+  border-radius:99px;cursor:pointer;
+  transition:all .3s;
+}
+.toggle-track::before{
+  content:'';
+  position:absolute;
+  width:16px;height:16px;
+  left:3px;top:3px;
+  background:var(--muted);
+  border-radius:50%;
+  transition:all .3s;
+}
+.toggle input:checked ~ .toggle-track{
+  background:rgba(124,111,255,.2);
+  border-color:rgba(124,111,255,.4);
+}
+.toggle input:checked ~ .toggle-track::before{
+  transform:translateX(20px);
+  background:var(--accent);
+  box-shadow:0 0 10px rgba(124,111,255,.5);
+}
+.privacy-badge{
+  font-size:11px;
+  font-family:'DM Mono',monospace;
+  color:var(--muted2);
+  margin-left:8px;
+}
+
+/* ── DIVIDER ── */
+.divider{
+  height:1px;
+  background:var(--border);
+  margin:4px 0 24px;
+}
+
+/* ── UPLOAD BUTTON ── */
+.upload-btn{
+  width:100%;
+  position:relative;
+  overflow:hidden;
+  background:var(--grad);
+  border:none;
+  border-radius:14px;
+  color:#fff;
+  font-family:'Syne',sans-serif;
+  font-weight:700;
+  font-size:16px;
+  letter-spacing:1px;
+  padding:18px;
+  cursor:pointer;
+  transition:all .3s;
+  box-shadow:0 4px 24px rgba(124,111,255,.3);
+}
+.upload-btn::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:rgba(255,255,255,0);
+  transition:background .2s;
+}
+.upload-btn:hover::before{background:rgba(255,255,255,.08)}
+.upload-btn:hover{
+  box-shadow:0 8px 32px rgba(124,111,255,.45);
+  transform:translateY(-1px);
+}
+.upload-btn:active{transform:translateY(0);box-shadow:0 2px 12px rgba(124,111,255,.3)}
+.upload-btn:disabled{
+  opacity:.45;cursor:not-allowed;
+  transform:none;box-shadow:none;
+}
+
+/* ── ERROR ── */
+.error-box{
+  display:none;
+  align-items:center;
+  gap:10px;
+  background:rgba(239,68,68,.08);
+  border:1px solid rgba(239,68,68,.2);
+  border-radius:12px;
+  padding:13px 16px;
+  font-size:13px;
+  color:#fca5a5;
+  margin-top:14px;
+}
+.error-box.show{display:flex}
+
+/* ── PROGRESS ── */
+.progress-wrap{display:none;margin-top:20px}
+.progress-wrap.show{display:block}
+
+.progress-header{
+  display:flex;justify-content:space-between;
+  font-size:12px;
+  font-family:'DM Mono',monospace;
+  color:var(--muted2);
+  margin-bottom:8px;
+}
+.progress-bar{
+  width:100%;height:4px;
+  background:var(--bg3);
+  border-radius:99px;
+  overflow:hidden;
+}
+.progress-fill{
+  height:100%;
+  background:var(--grad);
+  border-radius:99px;
+  transition:width .3s ease;
+  box-shadow:0 0 8px rgba(124,111,255,.5);
+  width:0%;
+}
+
+.log-scroll{
+  margin-top:12px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px;
+  max-height:150px;
+  overflow-y:auto;
+  font-size:11px;
+  font-family:'DM Mono',monospace;
+  color:var(--muted2);
+  line-height:2;
+}
+.log-scroll::-webkit-scrollbar{width:3px}
+.log-scroll::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:99px}
+
+.log-line{display:flex;gap:8px;align-items:flex-start}
+.log-icon{flex-shrink:0;color:var(--muted)}
+.log-line.ok .log-icon{color:var(--green)}
+.log-line.err .log-icon{color:var(--red)}
+.log-line.info .log-icon{color:var(--accent2)}
+
+/* ── RESULT ── */
+.result-box{
+  display:none;
+  margin-top:20px;
+  background:rgba(34,197,94,.06);
+  border:1px solid rgba(34,197,94,.2);
+  border-radius:16px;
+  padding:24px;
+  text-align:center;
+  animation:fadeUp .4s ease;
+}
+.result-box.show{display:block}
+
+.result-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:rgba(34,197,94,.12);
+  border:1px solid rgba(34,197,94,.25);
+  border-radius:99px;
+  padding:6px 16px;
+  font-size:12px;
+  font-family:'DM Mono',monospace;
+  color:var(--green);
+  margin-bottom:16px;
+}
+.result-title{
+  font-family:'Syne',sans-serif;
+  font-size:18px;
+  font-weight:700;
+  color:var(--text);
+  margin-bottom:16px;
+}
+.result-url{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  background:var(--bg2);
+  border:1px solid var(--border2);
+  border-radius:10px;
+  padding:12px 16px;
+  color:var(--accent2);
+  font-family:'DM Mono',monospace;
+  font-size:12px;
+  text-decoration:none;
+  transition:all .2s;
+  word-break:break-all;
+  text-align:left;
+  width:100%;
+}
+.result-url:hover{border-color:rgba(124,111,255,.4);color:var(--text)}
+
+.result-actions{
+  display:flex;gap:10px;
+  justify-content:center;
+  margin-top:14px;
+}
+.btn-ghost{
+  background:var(--bg2);
+  border:1px solid var(--border2);
+  border-radius:10px;
+  color:var(--muted2);
+  font-family:'Inter',sans-serif;
+  font-size:12px;
+  font-weight:500;
+  padding:9px 18px;
+  cursor:pointer;
+  transition:all .2s;
+}
+.btn-ghost:hover{border-color:var(--border2);color:var(--text);background:var(--bg3)}
+
+/* ── FOOTER ── */
+.footer{
+  margin-top:32px;
+  font-size:11px;
+  font-family:'DM Mono',monospace;
+  color:var(--muted);
+  letter-spacing:2px;
+  text-align:center;
+  z-index:1;
+  position:relative;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── MOBILE ── */
+@media(max-width:480px){
+  .card{padding:24px 18px;border-radius:16px}
+  .mode-tab{font-size:11px;padding:9px 4px}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-eyebrow">
+    <span class="dot"></span>
+    PRIVATE USE ONLY
+  </div>
+  <h1>JCZ GITHUB</h1>
+  <p class="header-sub">Push files to GitHub — instant &amp; direct</p>
+</div>
+
+<!-- MAIN CARD -->
+<div class="card">
+
+  <!-- 01 TOKEN -->
+  <div class="section">
+    <div class="section-label">
+      <span class="section-num">01</span>
+      GitHub Token
+    </div>
+    <div class="field">
+      <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off" spellcheck="false">
+      <button class="field-icon" onclick="toggleToken()" title="Tampilkan/Sembunyikan">👁</button>
+    </div>
+  </div>
+
+  <!-- 02 UPLOAD MODE + FILE -->
+  <div class="section">
+    <div class="section-label">
+      <span class="section-num">02</span>
+      Pilih Tipe Upload
+    </div>
+
+    <!-- 3 Mode Tabs -->
+    <div class="mode-tabs">
+      <button class="mode-tab active" id="tabZip" onclick="setMode('zip')">
+        <span class="tab-icon">🗜️</span>ZIP
+      </button>
+      <button class="mode-tab" id="tabFolder" onclick="setMode('folder')">
+        <span class="tab-icon">📁</span>Folder
+      </button>
+      <button class="mode-tab" id="tabFile" onclick="setMode('file')">
+        <span class="tab-icon">📄</span>File
+      </button>
+    </div>
+
+    <!-- ZIP Drop Zone -->
+    <div class="drop-zone" id="dzZip" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+      <input type="file" id="inpZip" accept=".zip" onchange="onZipChange(event)">
+      <div class="drop-icon-wrap">🗜️</div>
+      <div class="drop-main">Drop <span>.ZIP</span> di sini atau <span>browse</span></div>
+      <div class="drop-hint">AUTO-EXTRACTED TO GITHUB</div>
+    </div>
+
+    <!-- Folder Drop Zone -->
+    <div class="drop-zone" id="dzFolder" style="display:none">
+      <input type="file" id="inpFolder" webkitdirectory multiple onchange="onFolderChange(event)">
+      <div class="drop-icon-wrap">📁</div>
+      <div class="drop-main">Klik untuk pilih <span>Folder</span></div>
+      <div class="drop-hint">SEMUA FILE DALAM FOLDER AKAN DI-UPLOAD</div>
+    </div>
+
+    <!-- Single File Drop Zone -->
+    <div class="drop-zone" id="dzFile" style="display:none">
+      <input type="file" id="inpFile" onchange="onSingleFileChange(event)">
+      <div class="drop-icon-wrap">📄</div>
+      <div class="drop-main">Drop <span>File</span> di sini atau <span>browse</span></div>
+      <div class="drop-hint">SEMUA TIPE FILE DIDUKUNG</div>
+    </div>
+
+    <!-- File info chip -->
+    <div class="file-chip" id="fileChip">
+      <span>✅</span>
+      <span class="chip-name" id="chipName">-</span>
+      <button class="chip-clear" onclick="clearFile()">✕</button>
+    </div>
+  </div>
+
+  <!-- 03 REPO NAME -->
+  <div class="section">
+    <div class="section-label">
+      <span class="section-num">03</span>
+      Nama Repository
+    </div>
+    <input type="text" id="repoInput" placeholder="my-awesome-project" autocomplete="off" spellcheck="false">
+    <div class="row">
+      <span class="row-label">🔒 Private Repository</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <label class="toggle">
+          <input type="checkbox" id="privToggle" checked onchange="updatePrivLabel()">
+          <span class="toggle-track"></span>
+        </label>
+        <span class="privacy-badge" id="privLabel">PRIVATE</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 04 UPLOAD BUTTON -->
+  <button class="upload-btn" id="uploadBtn" onclick="startUpload()">
+    ⚡ UPLOAD SEKARANG !!!
+  </button>
+
+  <!-- ERROR -->
+  <div class="error-box" id="errorBox">
+    <span>⚠️</span>
+    <span id="errorMsg">-</span>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-header">
+      <span id="progressLabel">UPLOADING...</span>
+      <span id="progressPct">0%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="log-scroll" id="logScroll"></div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="result-box" id="resultBox">
+    <div class="result-badge">🎉 Upload Berhasil!</div>
+    <div class="result-title">Repository Siap di GitHub</div>
+    <a href="#" id="resultLink" target="_blank" class="result-url">
+      🔗 <span id="resultUrl">-</span>
+    </a>
+    <div class="result-actions">
+      <button class="btn-ghost" onclick="copyLink()">📋 Copy Link</button>
+      <button class="btn-ghost" onclick="openRepo()">↗ Buka GitHub</button>
+      <button class="btn-ghost" onclick="resetAll()">↺ Upload Lagi</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">JCZ GITHUB · PERSONAL USE ONLY · v2.0</div>
+
+<script>
+// ─── STATE ───
+let mode = 'zip';
+let zipFile = null;
+let folderFiles = null;
+let singleFile = null;
+
+// ─── UI HELPERS ───
+function $(id){return document.getElementById(id)}
+function showError(msg){$('errorMsg').textContent=msg;$('errorBox').classList.add('show')}
+function hideError(){$('errorBox').classList.remove('show')}
+function showResult(url){$('resultUrl').textContent=url;$('resultLink').href=url;$('resultBox').classList.add('show')}
+function hideResult(){$('resultBox').classList.remove('show')}
+
+function toggleToken(){
+  const i=$('tokenInput');
+  i.type=i.type==='password'?'text':'password';
+}
+
+function updatePrivLabel(){
+  $('privLabel').textContent=$('privToggle').checked?'PRIVATE':'PUBLIC';
+}
+
+// ─── MODE ───
+function setMode(m){
+  mode=m;
+  ['zip','folder','file'].forEach(x=>{
+    $('tab'+x.charAt(0).toUpperCase()+x.slice(1)).classList.toggle('active',x===m);
+    $('dz'+x.charAt(0).toUpperCase()+x.slice(1)).style.display=x===m?'':'none';
+  });
+  clearFile();
+}
+
+// ─── FILE HANDLERS ───
+function onZipChange(e){
+  const f=e.target.files[0];
+  if(!f)return;
+  if(!f.name.endsWith('.zip')){showError('Hanya file .zip yang didukung!');return}
+  zipFile=f;
+  showChip(`${f.name}  (${fmtSize(f.size)})`);
+  hideError();
+}
+function onFolderChange(e){
+  folderFiles=e.target.files;
+  if(!folderFiles||!folderFiles.length)return;
+  const total=Array.from(folderFiles).reduce((a,f)=>a+f.size,0);
+  showChip(`${folderFiles.length} file(s)  ·  ${fmtSize(total)}`);
+  hideError();
+}
+function onSingleFileChange(e){
+  const f=e.target.files[0];
+  if(!f)return;
+  singleFile=f;
+  showChip(`${f.name}  (${fmtSize(f.size)})`);
+  hideError();
+}
+
+// Drag & drop for ZIP
+function onDragOver(e){e.preventDefault();e.currentTarget.classList.add('dragover')}
+function onDragLeave(e){e.currentTarget.classList.remove('dragover')}
+function onDrop(e){
+  e.preventDefault();
+  e.currentTarget.classList.remove('dragover');
+  const f=e.dataTransfer.files[0];
+  if(!f)return;
+  if(mode==='zip'&&!f.name.endsWith('.zip')){showError('Hanya .zip yang bisa di-drop!');return}
+  if(mode==='zip'){zipFile=f;showChip(`${f.name}  (${fmtSize(f.size)})`)}
+  else if(mode==='file'){singleFile=f;showChip(`${f.name}  (${fmtSize(f.size)})`)}
+  hideError();
+}
+
+function showChip(text){
+  $('chipName').textContent=text;
+  $('fileChip').classList.add('show');
+}
+function clearFile(){
+  zipFile=null;folderFiles=null;singleFile=null;
+  $('fileChip').classList.remove('show');
+  $('inpZip').value='';
+  $('inpFolder').value='';
+  $('inpFile').value='';
+}
+
+// ─── MAIN UPLOAD ───
+async function startUpload(){
+  hideError();hideResult();
+  $('progressWrap').classList.remove('show');
+  $('logScroll').innerHTML='';
+
+  const token=$('tokenInput').value.trim();
+  const repoName=$('repoInput').value.trim();
+  const isPrivate=$('privToggle').checked;
+
+  if(!token)return showError('Token GitHub wajib diisi!');
+  if(!repoName)return showError('Nama repository wajib diisi!');
+  if(!/^[a-zA-Z0-9._-]+$/.test(repoName))return showError('Nama repo tidak valid. Gunakan: huruf, angka, - . _');
+  if(mode==='zip'&&!zipFile)return showError('Pilih file ZIP terlebih dahulu!');
+  if(mode==='folder'&&(!folderFiles||!folderFiles.length))return showError('Pilih folder terlebih dahulu!');
+  if(mode==='file'&&!singleFile)return showError('Pilih file terlebih dahulu!');
+
+  setLoading(true);
+  $('progressWrap').classList.add('show');
+  setProgress(0,1);
+
+  try{
+    // 1. Verifikasi token
+    log('Verifikasi token GitHub...','info');
+    const uRes=await ghFetch('https://api.github.com/user',token);
+    if(!uRes.ok){const e=await uRes.json();throw new Error('Token tidak valid: '+e.message)}
+    const user=await uRes.json();
+    log(`Login sebagai @${user.login}`,'ok');
+
+    // 2. Buat repo
+    log(`Membuat repository "${repoName}"...`,'info');
+    const rRes=await ghFetch('https://api.github.com/user/repos',token,'POST',{
+      name:repoName,private:isPrivate,auto_init:false,
+      description:'Uploaded via JCZ GITHUB'
+    });
+    if(!rRes.ok){
+      const e=await rRes.json();
+      // 422 = repo already exists
+      if(rRes.status===422)throw new Error(`Repository "${repoName}" sudah ada! Gunakan nama lain.`);
+      throw new Error('Gagal buat repo: '+e.message);
+    }
+    const repo=await rRes.json();
+    log(`Repository dibuat: ${repo.full_name}`,'ok');
+
+    // 3. Kumpulkan file
+    log('Memproses file...','info');
+    let files=[];
+    if(mode==='zip')files=await extractZip(zipFile);
+    else if(mode==='folder')files=await collectFolder(folderFiles);
+    else files=await collectSingle(singleFile);
+
+    if(!files.length)throw new Error('Tidak ada file yang ditemukan!');
+    log(`Ditemukan ${files.length} file(s)`,'info');
+
+    // 4. Upload satu per satu
+    let done=0;
+    for(const f of files){
+      const b64=ab2b64(f.content);
+      const r=await ghFetch(
+        `https://api.github.com/repos/${user.login}/${repoName}/contents/${f.path}`,
+        token,'PUT',{message:`Upload: ${f.path}`,content:b64}
+      );
+      if(!r.ok){const e=await r.json();log(`Skip: ${f.path} — ${e.message}`,'err')}
+      else{done++;log(`${f.path}`,'ok')}
+      setProgress(done,files.length);
+    }
+
+    const url=`https://github.com/${user.login}/${repoName}`;
+    log(`Selesai! ${done}/${files.length} file berhasil di-upload.`,'ok');
+    setProgress(files.length,files.length);
+    showResult(url);
+
+  }catch(err){
+    showError(err.message);
+    log('Error: '+err.message,'err');
+  }finally{
+    setLoading(false);
+  }
+}
+
+// ─── GITHUB FETCH ───
+function ghFetch(url,token,method='GET',body=null){
+  const opts={
+    method,
+    headers:{
+      Authorization:`Bearer ${token}`,
+      'Content-Type':'application/json',
+      'User-Agent':'JCZ-GitHub'
+    }
+  };
+  if(body)opts.body=JSON.stringify(body);
+  return fetch(url,opts);
+}
+
+// ─── FILE PROCESSORS ───
+async function extractZip(file){
+  const zip=await JSZip.loadAsync(file);
+  const out=[];const ps=[];
+  zip.forEach((path,entry)=>{
+    if(entry.dir||path.includes('__MACOSX')||path.includes('.DS_Store'))return;
+    ps.push(entry.async('arraybuffer').then(buf=>out.push({path:cleanPath(path),content:buf})));
+  });
+  await Promise.all(ps);
+  return out;
+}
+
+async function collectFolder(list){
+  const out=[];
+  for(const f of Array.from(list)){
+    const rel=f.webkitRelativePath||f.name;
+    const parts=rel.split('/');
+    const path=parts.length>1?parts.slice(1).join('/'):rel;
+    if(!path)continue;
+    out.push({path,content:await f.arrayBuffer()});
+  }
+  return out;
+}
+
+async function collectSingle(file){
+  const buf=await file.arrayBuffer();
+  return [{path:file.name,content:buf}];
+}
+
+function cleanPath(p){return p.replace(/^\/+/,'').replace(/\/\//g,'/')}
+
+// ─── BASE64 ───
+function ab2b64(buf){
+  const bytes=new Uint8Array(buf);
+  let s='';const c=8192;
+  for(let i=0;i<bytes.length;i+=c)s+=String.fromCharCode(...bytes.subarray(i,i+c));
+  return btoa(s);
+}
+
+// ─── UI STATE ───
+function setLoading(v){
+  const b=$('uploadBtn');
+  b.disabled=v;
+  b.textContent=v?'⏳  Sedang Upload...':'⚡ UPLOAD SEKARANG !!!';
+}
+
+function setProgress(done,total){
+  const pct=total?Math.round(done/total*100):0;
+  $('progressFill').style.width=pct+'%';
+  $('progressPct').textContent=pct+'%';
+  $('progressLabel').textContent=done>=total&&total>0?'SELESAI ✓':`UPLOADING  ${done} / ${total}`;
+}
+
+function log(text,type=''){
+  const el=$('logScroll');
+  const d=document.createElement('div');
+  d.className='log-line'+(type?' '+type:'');
+  const icons={ok:'✓',err:'✗',info:'›'};
+  d.innerHTML=`<span class="log-icon">${icons[type]||'·'}</span><span>${esc(text)}</span>`;
+  el.appendChild(d);
+  el.scrollTop=el.scrollHeight;
+}
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function fmtSize(b){
+  if(b<1024)return b+' B';
+  if(b<1048576)return(b/1024).toFixed(1)+' KB';
+  return(b/1048576).toFixed(1)+' MB';
+}
+
+function copyLink(){
+  navigator.clipboard.writeText($('resultUrl').textContent).then(()=>{
+    const b=event.target;
+    b.textContent='✅ Copied!';
+    setTimeout(()=>b.textContent='📋 Copy Link',2000);
+  });
+}
+function openRepo(){window.open($('resultLink').href,'_blank')}
+function resetAll(){
+  clearFile();hideResult();
+  $('progressWrap').classList.remove('show');
+  $('repoInput').value='';
+  setLoading(false);
+}
+</script>
+</body>
+</html>
